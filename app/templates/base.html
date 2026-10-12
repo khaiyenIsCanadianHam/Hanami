@@ -1,0 +1,40 @@
+{% from 'components/icons.html' import icon %}
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="csrf-token" content="{{ csrf_token() }}">
+<meta name="theme-color" content="#163b32">
+<title>{% block title %}{{ title|default('Workspace') }}{% endblock %} · Hanami</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/app.css') }}">
+<script src="{{ url_for('static', filename='js/app.js') }}" defer></script>
+{% block head %}{% endblock %}
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+{% if current_user.is_authenticated %}
+<aside class="sidebar" id="sidebar" aria-label="Main navigation">
+<a class="brand" href="/dashboard"><span class="brand-mark">{{ icon('flower', 32) }}</span><span>hanami<span class="brand-caption">WEBDEV CRM</span></span></a>
+<div class="workspace-chip"><span class="workspace-avatar">{{ (ui_company|default('My Studio'))[:1]|upper }}</span><span>{{ ui_company|default('My Studio') }}<small>Your business workspace</small></span><span class="workspace-indicator"></span></div>
+<nav>
+{% set groups = [('WORKSPACE', [('dashboard','Overview','/dashboard'),('leads','Leads','/leads'),('clients','Clients','/clients'),('inquiries','Inquiries','/inquiries'),('projects','Projects','/projects'),('tasks','Tasks','/tasks'),('calendar','Calendar','/calendar')]), ('BUSINESS', [('proposals','Proposals','/proposals'),('contracts','Contracts','/contracts'),('invoices','Invoices','/invoices'),('payments','Payments','/payments'),('expenses','Expenses','/expenses'),('email','Email center','/email'),('documents','Documents','/documents')]), ('INSIGHTS & CARE', [('maintenance','Maintenance','/maintenance'),('clients','Support','/support'),('analytics','Analytics','/analytics')])] %}
+{% for group, links in groups %}<p class="nav-label">{{ group }}</p>{% for key, label, path in links %}<a class="nav-link {% if request.path == path or (path != '/dashboard' and request.path.startswith(path + '/')) %}active{% endif %}" href="{{ path }}" {% if request.path == path %}aria-current="page"{% endif %}>{{ icon(key, 18) }}<span>{{ label }}</span>{% if key == 'dashboard' %}<span class="nav-active-dot"></span>{% endif %}</a>{% endfor %}{% endfor %}
+</nav>
+<div class="sidebar-bottom"><a class="nav-link {% if request.path.startswith('/settings') %}active{% endif %}" href="/settings">{{ icon('settings',18) }} Settings</a><div class="sidebar-note"><span class="live-dot"></span> Built for your next chapter.</div></div>
+</aside>
+<div class="sidebar-scrim" data-close-sidebar></div>
+<div class="app-shell">
+<header class="topbar"><div class="topbar-left"><button class="icon-button mobile-toggle" data-toggle-sidebar aria-label="Open navigation" aria-controls="sidebar" aria-expanded="false">{{ icon('menu') }}</button><span class="breadcrumb">Workspace <span>/</span> <strong>{{ title|default('Overview') }}</strong></span></div>
+<form class="global-search" action="/search" method="get" role="search">{{ icon('search',17) }}<input type="search" name="q" placeholder="Search your workspace…" aria-label="Search your workspace" value="{{ search_query|default('') }}"><kbd>/</kbd></form>
+<div class="topbar-actions"><button class="icon-button" data-theme-toggle title="Change color theme" aria-label="Change color theme">{{ icon('sun') }}</button><a class="icon-button notification-button" href="/dashboard#activity" title="View activity" aria-label="View recent activity">{{ icon('bell') }}{% if ui_unread_notifications|default(0) %}<span class="notification-dot"></span>{% endif %}</a><details class="user-menu"><summary aria-label="Account menu"><span class="avatar">{{ (current_user.name or current_user.email)[:2]|upper }}</span></summary><div class="dropdown"><strong>{{ current_user.name }}</strong><small>{{ current_user.email }}</small><a href="/settings">Workspace settings</a><form action="/logout" method="post"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><button type="submit">{{ icon('logout',16) }} Sign out</button></form></div></details></div>
+</header>
+{% if ui_demo_mode|default(false) %}<div class="demo-banner">Demonstration workspace · All seeded business records are fictional.</div>{% endif %}
+{% endif %}
+<main id="main" class="{% if current_user.is_authenticated %}main-content{% else %}guest-content{% endif %}">
+<div class="toast-region" aria-live="polite">{% for category, message in get_flashed_messages(with_categories=true) %}<div class="toast {{ category }}" role="status"><span>{{ message }}</span><button type="button" class="toast-dismiss" aria-label="Dismiss notification">×</button></div>{% endfor %}</div>
+{% block content %}{% endblock %}
+</main>
+{% if current_user.is_authenticated %}<footer class="app-footer"><span>Hanami <span class="muted">/ A little more organized. A lot more possible.</span></span><span class="muted">{{ ui_timezone|default('Asia/Manila') }}</span></footer></div>{% endif %}
+<dialog id="confirm-dialog"><form method="dialog"><h2>Confirm this action</h2><p id="confirm-message"></p><div class="actions"><button class="button secondary" value="cancel">Cancel</button><button class="button danger" value="confirm">Continue</button></div></form></dialog>
+{% block scripts %}{% endblock %}
+</body></html>

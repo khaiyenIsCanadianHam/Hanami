@@ -1,0 +1,1 @@
+{% extends 'base.html' %}{% block content %}<div class="page-header"><div><h1>{{ title }}</h1><p>Let’s adjust that request.</p></div></div><section class="panel"><div class="empty-state"><h2>Check your filters</h2><p>{{ message }}</p><a class="button" href="{{ '/calendar' if title == 'Calendar' else '/analytics' }}">Reset filters</a></div></section>{% endblock %}

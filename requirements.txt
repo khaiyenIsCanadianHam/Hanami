@@ -1,0 +1,15 @@
+Flask==3.1.2
+Flask-SQLAlchemy==3.1.1
+Flask-Migrate==4.1.0
+Flask-Login==0.6.3
+Flask-WTF==1.2.2
+Flask-Limiter==4.1.1
+Werkzeug==3.1.3
+SQLAlchemy==2.0.43
+python-dotenv==1.1.1
+email-validator==2.3.0
+yagmail==0.15.293
+APScheduler==3.11.0
+reportlab==4.4.4
+bleach==6.2.0
+waitress==3.0.2

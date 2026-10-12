@@ -1,0 +1,25 @@
+name: CRM checks
+on:
+  push:
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+      - run: python -m pip install -r requirements-dev.txt
+      - run: ruff check app tests scheduler
+      - run: ruff format --check app tests scheduler migrations
+      - run: python -m pytest -q
+      - run: python -m compileall -q app scheduler
+      - name: Verify migrations and template initialization
+        run: |
+          flask --app run:create_app db upgrade
+          flask --app run:create_app seed-templates
+          flask --app run:create_app db check
