@@ -134,7 +134,6 @@ def index():
     current_date = today()
     now = utcnow()
     currency = setting("currency", current_app.config.get("DEFAULT_CURRENCY", "PHP"))
-    report = financial_report(month_start(current_date, -5), current_date, currency)
     month_report = financial_report(month_start(current_date), current_date, currency)
     invoices = db.session.scalars(
         db.select(Invoice).where(
@@ -174,16 +173,6 @@ def index():
         .where(ProjectMilestone.completed.is_(False), ProjectMilestone.due_at >= now)
         .order_by(ProjectMilestone.due_at)
     )
-    pipeline = [
-        (label, count(Lead, Lead.status.in_(statuses)), color)
-        for label, statuses, color in [
-            ("New connections", ["new"], "#c5d1b9"),
-            ("In conversation", ["contacted", "awaiting_response"], "#a7bea2"),
-            ("Qualified", ["qualified", "consultation_scheduled"], "#86a282"),
-            ("Proposal requested", ["proposal_requested"], "#5c8568"),
-            ("Converted", ["converted"], "#345d47"),
-        ]
-    ]
     activity = db.session.scalars(
         db.select(ActivityLog)
         .order_by(ActivityLog.created_at.desc(), ActivityLog.id.desc())
@@ -197,18 +186,14 @@ def index():
     ).all()
     return render_template(
         "dashboard/index.html",
-        title="Overview",
-        today=current_date,
+        title="Dashboard",
         counts=counts,
-        report=report,
+        report=month_report,
         month_report=month_report,
-        chart=chart_data(report),
         outstanding=outstanding,
         projects=active_projects,
         tasks=tasks,
         milestone=milestone,
-        pipeline=pipeline,
-        pipeline_max=max([item[1] for item in pipeline] or [1]) or 1,
         activity=activity,
         notifications=notifications,
     )

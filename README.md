@@ -1,8 +1,8 @@
-# Hanami · WebDev CRM
+# Hanami
 
-WebDev CRM is a locally hosted Flask application for managing website development clients from the first inquiry through delivery and maintenance. It connects leads, clients, projects, tasks, pricing, payments, documents, email, QA, launch records, and support in one SQLite database.
+Hanami is a locally hosted Flask application for managing website development clients from the first inquiry through delivery and maintenance. It connects leads, clients, projects, tasks, pricing, payments, documents, email, QA, launch records, and support in one SQLite database.
 
-The interface supports desktop and mobile layouts, light and dark themes, search, dashboards, calendar views, and CSV/PDF exports. Human decisions remain explicit: an email send does not accept a proposal, a reported payment does not verify it, and a checked checklist does not authorize a launch.
+The interface uses a compact sidebar, plain forms, and project/task tables. The dashboard shows totals and pending work; detailed charts remain in Analytics. Desktop and mobile layouts, light and dark themes, search, calendar views, and CSV/PDF exports are supported. Human decisions remain explicit: an email send does not accept a proposal, a reported payment does not verify it, and a checked checklist does not authorize a launch.
 
 This guide covers installation, first use, the full project workflow, solo and small-team routines, and ongoing maintenance. The [user guide](docs/user-guide.md) explains the workflows in more detail; [deployment and operations](docs/deployment.md) covers hosting, SMTP, and recovery. The [validation record](docs/validation.md) lists the checks performed and integration limits. The original [requirements](docs/requirements.md) and [architecture](docs/architecture.md) are included for reference.
 

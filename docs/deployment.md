@@ -92,15 +92,15 @@ A minimal Linux service definition can use the same dedicated account and privat
 
 ```ini
 [Unit]
-Description=WebDev CRM scheduler
+Description=Hanami scheduler
 After=network.target
 
 [Service]
 Type=simple
-User=webdev-crm
-WorkingDirectory=/srv/webdev-crm
-EnvironmentFile=/srv/webdev-crm/.env
-ExecStart=/srv/webdev-crm/.venv/bin/python -m scheduler
+User=hanami
+WorkingDirectory=/srv/hanami
+EnvironmentFile=/srv/hanami/.env
+ExecStart=/srv/hanami/.venv/bin/python -m scheduler
 Restart=on-failure
 RestartSec=10
 UMask=0077
@@ -131,13 +131,13 @@ Backups contain sensitive client and business data. Store them privately, encryp
 Stop or pause web and scheduler writes while creating an archive so uploads stay consistent with the database snapshot:
 
 ```bash
-flask --app run:create_app backup --output /private/backups/webdev-crm.zip
+flask --app run:create_app backup --output /private/backups/hanami.zip
 ```
 
 For a restore, stop the web process and scheduler first. Verify that the archive came from a trusted source, preserve the current instance, then run:
 
 ```bash
-flask --app run:create_app restore /private/backups/webdev-crm.zip --yes
+flask --app run:create_app restore /private/backups/hanami.zip --yes
 flask --app run:create_app db upgrade
 ```
 
@@ -146,7 +146,7 @@ Restore validates the archive and keeps a recovery copy of the existing database
 For a privacy-aware business export:
 
 ```bash
-flask --app run:create_app export-data --output /private/exports/webdev-crm.json
+flask --app run:create_app export-data --output /private/exports/hanami.json
 ```
 
 Exports exclude user password hashes and secret settings, but still contain personal and commercial data. They are not a substitute for a complete database and uploaded-file backup.

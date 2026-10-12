@@ -1,4 +1,4 @@
-"""Application factory for the WebDev CRM local web application."""
+"""Application factory for the Hanami local web application."""
 
 import os
 import hashlib

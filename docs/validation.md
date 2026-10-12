@@ -15,3 +15,7 @@ Validated on 12 October 2026 using Python 3.12 in the development cloud environm
 The dashboard screenshot uses a separate, clearly labeled fictional demonstration database. The primary environment database contains default templates and scheduler records, without a default administrator or sample client records.
 
 Real SMTP delivery was **not tested**: no provider credentials were supplied. Test mode and mocked transport tests verified local queue behavior, TLS configuration, retries and uncertain-outcome handling. Hosting, electronic signatures, bank/payment-provider processing, and external client website deployment are separate operations; the CRM records their reviewed evidence. Granular team roles and client portal access are outside the current administrator-only release.
+
+## Hanami UI update
+
+The simplified interface was checked with the same 118-test suite (all passed) and 35 Chromium desktop/mobile views (all HTTP 200, no JavaScript errors or page overflow). The dashboard uses flat totals and project/task tables, with charts available in Analytics. The app, login screen, exports, and default document/email branding use Hanami. Updated desktop and mobile screenshots contain fictional demonstration data only.

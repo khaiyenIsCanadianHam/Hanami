@@ -295,7 +295,7 @@ def register_commands(app):
                         )
                     }
                     if not {"user", "client", "project"}.issubset(tables):
-                        raise ValueError("The backup is not a WebDev CRM database.")
+                        raise ValueError("The backup is not a Hanami database.")
             except (
                 ValueError,
                 KeyError,

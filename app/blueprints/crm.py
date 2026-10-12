@@ -243,7 +243,7 @@ def leads():
             ("status", "Status"),
         ],
         "/leads",
-        "Turn good conversations into lasting client relationships.",
+        "Track leads and follow-ups.",
     )
 
 
@@ -360,7 +360,7 @@ def lead_form(lead_id=None):
     ]
     return render_template(
         "form.html",
-        title="Edit lead" if lead_id else "New opportunity",
+        title="Edit lead" if lead_id else "New lead",
         fields=fields,
         submit_label="Save lead",
     )
@@ -443,7 +443,7 @@ def clients():
             ("status", "Status"),
         ],
         "/clients",
-        "All your client relationships, in one place.",
+        "",
     )
 
 
@@ -723,7 +723,7 @@ def projects():
             ("status", "Status"),
         ],
         "/projects",
-        "A clear path from first conversation to final handover.",
+        "",
     )
 
 

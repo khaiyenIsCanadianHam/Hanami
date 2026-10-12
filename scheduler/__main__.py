@@ -40,9 +40,7 @@ def main():
             misfire_grace_time=60,
         )
         tick()
-        print(
-            "WebDev CRM scheduler running; durable jobs are processed every 30 seconds."
-        )
+        print("Hanami scheduler running; durable jobs are processed every 30 seconds.")
         try:
             scheduler.start()
         except (KeyboardInterrupt, SystemExit):

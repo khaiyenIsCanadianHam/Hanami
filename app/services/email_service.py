@@ -293,7 +293,7 @@ def process_email_queue(limit=20, now=None):
             port = int(config.get("SMTP_PORT", 465))
             tls_context = ssl.create_default_context()
             tls_options = {"context": tls_context} if port == 465 else {}
-            sender = {config["SMTP_USER"]: config.get("SMTP_SENDER_NAME", "WebDev CRM")}
+            sender = {config["SMTP_USER"]: config.get("SMTP_SENDER_NAME", "Hanami")}
             smtp = yagmail.SMTP(
                 user=sender,
                 password=config["SMTP_PASSWORD"],

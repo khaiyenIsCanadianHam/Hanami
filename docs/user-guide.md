@@ -1,4 +1,4 @@
-# WebDev CRM user guide
+# Hanami user guide
 
 ## Start with your workspace
 

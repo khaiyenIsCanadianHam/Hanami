@@ -1,16 +1,81 @@
 {% extends 'base.html' %}
-{% from 'components/icons.html' import icon %}
 {% block content %}
-<div class="page-header dashboard-heading"><div><span class="eyebrow">A LITTLE CLARITY FOR YOUR DAY</span><h1>Good to see you, {{ (current_user.name or 'there').split()[0] }}<span class="greeting-wave">.</span></h1><p>Here’s what’s happening in your studio today.</p></div><div class="actions"><span class="greeting-date">{{ icon('calendar',15) }} {{ today.strftime('%A, %b %d') }}</span><a class="button" href="/projects/new">{{ icon('plus',16) }} New project</a></div></div>
-<div class="stats"><a href="/clients" class="stat-card"><div class="stat-top"><span class="stat-label">Total clients</span><span class="stat-icon">{{ icon('clients',17) }}</span></div><span class="stat-number">{{ counts.clients }}</span><div class="stat-foot"><strong>{{ counts.leads }} active leads</strong><span>in your pipeline</span></div></a><a href="/projects" class="stat-card"><div class="stat-top"><span class="stat-label">Active projects</span><span class="stat-icon blue">{{ icon('projects',17) }}</span></div><span class="stat-number">{{ counts.projects }}</span><div class="stat-foot"><strong>{{ counts.approvals }} stages</strong><span>awaiting review</span></div></a><a href="/analytics" class="stat-card"><div class="stat-top"><span class="stat-label">Collected this month</span><span class="stat-icon orange">{{ icon('money',17) }}</span></div><span class="stat-number">{{ month_report.receipts|currency(report.currency) }}</span><div class="stat-foot"><strong>Verified payments</strong><span>· {{ report.currency }}</span></div></a><a href="/invoices" class="stat-card"><div class="stat-top"><span class="stat-label">Outstanding balance</span><span class="stat-icon lilac">{{ icon('invoices',17) }}</span></div><span class="stat-number">{{ outstanding|currency(report.currency) }}</span><div class="stat-foot"><strong class="orange">{{ counts.invoices }} unpaid invoices</strong><span>to follow up</span></div></a></div>
-<div class="milestone-banner"><span class="milestone-illustration">{{ icon('flower',31) }}</span><div><h2>{% if milestone %}A next step worth looking forward to{% elif counts.projects %}Make room for your best work{% else %}Great projects start with a conversation{% endif %}</h2><p>{% if milestone %}{{ milestone.title }} · {{ milestone.due_at|localtime('%b %d') }} · {{ milestone.project.title }}{% elif counts.projects %}Your projects, conversations, and next steps are all in one place.{% else %}Add your first lead and follow their journey from hello to handover.{% endif %}</p></div><a class="button secondary small" href="{% if milestone %}/projects/{{ milestone.project_id }}{% elif counts.projects %}/tasks{% else %}/leads/new{% endif %}">{% if milestone %}View milestone{% elif counts.projects %}Plan your day{% else %}Add a lead{% endif %} {{ icon('arrow',14) }}</a></div>
-<div class="dashboard-grid">
-<section class="panel"><div class="panel-header"><div><h2>Revenue overview</h2><p>Verified receipts and recorded expenses · {{ report.currency }}</p></div><a class="text-link" href="/analytics">View report {{ icon('arrow',13) }}</a></div><div class="revenue-head"><span class="revenue-total">{{ report.receipts|currency(report.currency) }}</span><span class="revenue-note">collected in 6 months</span></div><div class="chart-frame"><canvas data-revenue-chart aria-label="Monthly verified receipts and expenses" role="img" hidden></canvas><div class="css-chart" data-chart-fallback>{% set peak = ([1] + report.monthly|map(attribute='receipts')|list + report.monthly|map(attribute='expenses')|list)|max %}{% for month in report.monthly %}<div class="css-chart-column"><div class="css-chart-bar" style="height:{{ (month.receipts / peak * 90)|round }}%" title="{{ month.receipts|currency(report.currency) }} receipts"></div><div class="css-chart-bar expenses" style="height:{{ (month.expenses / peak * 90)|round }}%" title="{{ month.expenses|currency(report.currency) }} expenses"></div><span class="css-chart-label">{{ month.label }}</span></div>{% endfor %}</div></div><div class="panel-body chart-legend"><span><i></i> Verified receipts</span><span><i class="expenses"></i> Expenses</span><a class="text-link" href="/analytics#monthly">View data table</a></div></section>
-<section class="panel"><div class="panel-header"><div><h2>Lead pipeline</h2><p>From a first hello to a new partnership</p></div><a class="row-arrow" href="/leads" aria-label="View all leads">{{ icon('arrow',16) }}</a></div><div class="pipeline-total"><strong>{{ counts.leads }}</strong><span>active opportunities</span></div><div class="pipeline">{% for label, amount, color in pipeline %}<div class="pipeline-row"><span class="pipeline-label">{{ label }}</span><span class="pipeline-track"><span class="pipeline-fill" style="width:{{ amount / pipeline_max * 100 }}%;background:{{ color }}"></span></span><strong>{{ amount }}</strong></div>{% endfor %}</div></section>
-<section class="panel full-width"><div class="panel-header"><div><h2>Projects in motion</h2><p>A little progress, every day.</p></div><a class="text-link" href="/projects">All projects {{ icon('arrow',13) }}</a></div>{% if projects %}<div class="table-wrap"><table><thead><tr><th>Project / Client</th><th>Current stage</th><th>Progress</th><th>Due date</th><th>Status</th><th></th></tr></thead><tbody>{% for project in projects %}<tr><td><a class="company-cell" href="/projects/{{ project.id }}"><span class="company-monogram">{{ (project.client.business_name or project.client.name)[:2]|upper }}</span><span class="record-link">{{ project.title }}<small>{{ project.client.business_name or project.client.name }}</small></span></a></td><td><span class="small-text">{% for stage in project.stages if stage.number == project.current_stage %}{{ stage.title }}{% else %}Stage {{ project.current_stage }}{% endfor %}</span></td><td style="min-width:130px"><div class="progress-label"><span>{{ project.progress }}%</span><span>14 stages</span></div><div class="progress" role="progressbar" aria-valuenow="{{ project.progress }}" aria-valuemin="0" aria-valuemax="100" aria-label="{{ project.title }} progress"><span style="width:{{ project.progress }}%"></span></div></td><td class="muted">{{ project.deadline|localtime('%b %d, %Y') }}</td><td><span class="badge {{ project.status }}">{{ project.status|title }}</span></td><td><a class="row-arrow" href="/projects/{{ project.id }}" aria-label="View {{ project.title }}">{{ icon('arrow',16) }}</a></td></tr>{% endfor %}</tbody></table></div>{% else %}<div class="compact-empty">Your next great project belongs here. <a class="text-link" href="/projects/new">Create a project {{ icon('arrow',13) }}</a></div>{% endif %}</section>
-<section class="panel"><div class="panel-header"><div><h2>Your next steps</h2><p>{% if counts.overdue %}{{ counts.overdue }} overdue tasks need a little attention{% else %}Keep the important things moving{% endif %}</p></div><a class="text-link" href="/tasks">All tasks {{ icon('arrow',13) }}</a></div><div class="task-list">{% for task in tasks %}<div class="task-row"><a class="task-check" href="/tasks/{{ task.id }}" aria-label="Edit task {{ task.title }}"></a><div class="task-content"><a href="/tasks/{{ task.id }}">{{ task.title }}</a><small>{{ task.project.title if task.project else 'Studio task' }}</small></div><span class="badge {{ task.priority }}">{{ task.priority }}</span><span class="task-date {% if task.is_overdue %}overdue{% endif %}">{{ task.due_at|localtime('%b %d') }}</span></div>{% else %}<div class="compact-empty">A little breathing room. <a class="text-link" href="/tasks/new">Add your next task</a></div>{% endfor %}</div></section>
-<section class="panel" id="activity"><div class="panel-header"><div><h2>Recent activity</h2><p>The latest around your workspace</p></div><a class="text-link" href="/email">{{ counts.drafts }} email drafts</a></div><div class="activity-list">{% for item in activity %}<div class="activity-item"><span class="activity-icon">{{ icon('check',13) }}</span><div class="activity-copy"><p>{% if item.project_id %}<a href="/projects/{{ item.project_id }}">{{ item.description }}</a>{% elif item.client_id %}<a href="/clients/{{ item.client_id }}">{{ item.description }}</a>{% else %}{{ item.description }}{% endif %}</p><small>{{ item.created_at|localtime('%b %d · %I:%M %p') }}</small></div></div>{% else %}<div class="compact-empty">Your story starts here. New activity appears as you work.</div>{% endfor %}</div></section>
-{% if notifications %}<section class="panel full-width"><div class="panel-header"><h2>Workspace notifications</h2></div><div class="panel-body">{% for note in notifications %}<div class="record-row"><div><strong>{{ note.title }}</strong><p class="muted small-text">{{ note.body }}</p></div><form method="post" action="/notifications/{{ note.id }}/read"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><button class="button secondary small">Mark read</button></form></div>{% endfor %}</div></section>{% endif %}
-</div>
+<header class="page-header">
+  <h1>Dashboard</h1>
+  <div class="actions">
+    <a class="button secondary" href="/leads/new">New lead</a>
+    <a class="button" href="/projects/new">New project</a>
+  </div>
+</header>
+
+<dl class="overview-totals" aria-label="Business overview">
+  <div><dt>Clients</dt><dd><a href="/clients">{{ counts.clients }}</a></dd></div>
+  <div><dt>Active projects</dt><dd><a href="/projects">{{ counts.projects }}</a></dd></div>
+  <div><dt>Received this month</dt><dd><a href="/analytics">{{ month_report.receipts|currency(report.currency) }}</a></dd></div>
+  <div><dt>Outstanding invoices</dt><dd><a href="/invoices">{{ outstanding|currency(report.currency) }}</a></dd></div>
+</dl>
+
+<nav class="attention-links" aria-label="Pending work">
+  <a href="/tasks"><strong>{{ counts.overdue }}</strong> overdue tasks</a>
+  <a href="/projects"><strong>{{ counts.approvals }}</strong> stages to review</a>
+  <a href="/email"><strong>{{ counts.drafts }}</strong> email drafts</a>
+  <a href="/invoices"><strong>{{ counts.invoices }}</strong> unpaid invoices</a>
+</nav>
+
+<section class="workspace-section" aria-labelledby="dashboard-projects">
+  <div class="section-heading-row"><h2 id="dashboard-projects">Active projects</h2><a class="text-link" href="/projects">All projects</a></div>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Project</th><th>Client</th><th>Current stage</th><th>Due</th><th>Status</th><th>Action</th></tr></thead>
+      <tbody>
+        {% for project in projects %}
+        <tr>
+          <td><a class="record-link" href="/projects/{{ project.id }}">{{ project.title }}</a></td>
+          <td>{{ project.client.business_name or project.client.name }}</td>
+          <td>{% for stage in project.stages if stage.number == project.current_stage %}{{ stage.title }}{% else %}Stage {{ project.current_stage }}{% endfor %}</td>
+          <td>{{ project.deadline|localtime }}</td>
+          <td><span class="badge {{ project.status }}">{{ project.status|title }}</span></td>
+          <td><a class="text-link" href="/projects/{{ project.id }}">Open project</a></td>
+        </tr>
+        {% else %}
+        <tr><td colspan="6">No active projects. <a class="text-link" href="/projects/new">Create project</a></td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% if milestone %}<p class="next-milestone">Next milestone: <a class="text-link" href="/projects/{{ milestone.project_id }}">{{ milestone.title }}</a> · {{ milestone.due_at|localtime }} · {{ milestone.project.title }}</p>{% endif %}
+</section>
+
+<section class="workspace-section" aria-labelledby="dashboard-tasks">
+  <div class="section-heading-row"><h2 id="dashboard-tasks">Upcoming tasks</h2><div class="actions"><a class="text-link" href="/tasks">All tasks</a><a class="button secondary small" href="/tasks/new">New task</a></div></div>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Task</th><th>Project</th><th>Assigned to</th><th>Due</th><th>Priority</th><th>Action</th></tr></thead>
+      <tbody>
+        {% for task in tasks %}
+        <tr>
+          <td><a class="record-link" href="/tasks/{{ task.id }}">{{ task.title }}</a></td>
+          <td>{{ task.project.title if task.project else 'Internal' }}</td>
+          <td>{{ task.assigned_user.name if task.assigned_user else 'Unassigned' }}</td>
+          <td class="{{ 'overdue' if task.is_overdue else '' }}">{{ task.due_at|localtime }}</td>
+          <td><span class="badge {{ task.priority }}">{{ task.priority|title }}</span></td>
+          <td><a class="text-link" href="/tasks/{{ task.id }}">Edit task</a></td>
+        </tr>
+        {% else %}<tr><td colspan="6">No pending tasks.</td></tr>{% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+
+{% if notifications %}
+<section class="workspace-section" aria-labelledby="dashboard-notifications">
+  <h2 id="dashboard-notifications">Notifications</h2>
+  {% for note in notifications %}<div class="record-row"><div><strong>{{ note.title }}</strong><p class="muted">{{ note.body }}</p></div><form method="post" action="/notifications/{{ note.id }}/read"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><button class="button secondary small">Mark read</button></form></div>{% endfor %}
+</section>
+{% endif %}
+
+<details class="workspace-section activity-details" id="activity">
+  <summary>Recent activity</summary>
+  {% for item in activity %}<div class="record-row"><span>{% if item.project_id %}<a href="/projects/{{ item.project_id }}">{{ item.description }}</a>{% elif item.client_id %}<a href="/clients/{{ item.client_id }}">{{ item.description }}</a>{% else %}{{ item.description }}{% endif %}</span><time>{{ item.created_at|localtime('%b %d, %I:%M %p') }}</time></div>{% else %}<p class="muted">No activity recorded.</p>{% endfor %}
+</details>
 {% endblock %}
-{% block scripts %}<script id="revenue-data" type="application/json">{{ chart|tojson }}</script><script src="{{ url_for('static',filename='js/chart.umd.js') }}" defer></script><script src="{{ url_for('static',filename='js/charts.js') }}" defer></script>{% endblock %}

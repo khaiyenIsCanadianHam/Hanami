@@ -37,7 +37,7 @@ def settings():
         "SMTP_USER": os.getenv("SMTP_USER", ""),
         "SMTP_PASSWORD": os.getenv("SMTP_PASSWORD", ""),
         "SMTP_REPLY_TO": os.getenv("SMTP_REPLY_TO", ""),
-        "SMTP_SENDER_NAME": os.getenv("SMTP_SENDER_NAME", "WebDev CRM"),
+        "SMTP_SENDER_NAME": os.getenv("SMTP_SENDER_NAME", "Hanami"),
         "AUTOMATIONS_PAUSED": env_bool("AUTOMATIONS_PAUSED", False),
         "RATELIMIT_STORAGE_URI": os.getenv("RATELIMIT_STORAGE_URI", "memory://"),
         "RATELIMIT_HEADERS_ENABLED": True,

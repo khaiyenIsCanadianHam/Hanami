@@ -80,7 +80,7 @@ def project_context(project=None):
     values = {
         "today": utcnow().date().isoformat(),
         "developer_name": setting("developer_name", "Your developer"),
-        "company_name": setting("company_name", "WebDev CRM"),
+        "company_name": setting("company_name", "Hanami"),
         "business_email": setting("business_email", ""),
     }
     if project is None:
@@ -534,7 +534,7 @@ def export_pdf(document):
                 )
             )
     SimpleDocTemplate(
-        output, title=document.title, author=setting("company_name", "WebDev CRM")
+        output, title=document.title, author=setting("company_name", "Hanami")
     ).build(story)
     output.seek(0)
     return output

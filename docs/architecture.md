@@ -1,4 +1,4 @@
-# WebDev CRM architecture
+# Hanami architecture
 
 Flask application factory, SQLite/SQLAlchemy, Jinja server-rendered pages, vanilla JS enhancements. All blueprints require authenticated administrator access (single administrator initially); future users have role and active flags. Business dates are UTC; UI timezone defaults to Asia/Manila. Money uses Decimal/Numeric, never floating point calculations. No automatic deployment. SMTP defaults to test mode.
 
